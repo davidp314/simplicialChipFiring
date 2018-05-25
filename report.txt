@@ -1,0 +1,36 @@
+Conjecture:
+
+Let S be a simplicial complex of dimension d.  Conjecture: S is a tree with H_{d-1}(S)=0
+if and only if 0 is a minimal winning degree in dimension d-1.
+
+Partial argument:
+
+Suppose that all (d-1)-divisors of degree 0 are winnable (which might be different
+from 0 be a minimal winning degree---we don't know).  Then since the group of
+divisors of degree 0 modulo the image of the Laplacian is isomorphic to the
+torsion part of the critical group and the critical group is isomorphic to the
+F/im(reduced Laplacian), we know that the determinant of the reduced Laplacian
+is 1 (otherwise, it's smith normal form would demonstrate torsion in
+F/im(red_Lap) and hence in the critical group.  We have the following equation
+for the tree number
+
+t(d) = sum_{T: T a d-dim'l spanning tree of S) |H_{d-1}(T)|^2
+     = |H_{d-2}(S)|^2/|H_{d-2}(R)|^2 det(red_Lap_{d-1})
+
+where R is any (d-1)-dimensional tree.  In our case, the determinant is 1.  
+
+Next, suppose that |H_{d-2}(S)| = |H_{d-2}(R)|.  (For example, we could take
+H_{d-2}(S)=0, or consider the case where d=2, and the complex is connected.)
+Then we know t(d) = 1 and S has a unique tree (the first sum has only one
+summand).  We would like to say that S is this tree.  Scott gives an argument
+under the condition that S is acyclic in codimension 1.  Now, we know that the
+torsion part of the critical group in dimension d-1 is 0, and we know that the
+critical group of dimension d-1 surjects on to the homology group in dimension
+d-1.  Is there are way we could say that 0 being a winning degree forces the d-1
+homology group to be finite?  (See Scott and Liam's paper where they prove
+something similar, at least in dimension d=2.)
+
+At any rate, it is interesting to look for a non-tree S such that every divisor
+of degree 0 is winnable.  Such an S would need to have |H_{d-2}(S)| !=
+|H_{d-2}(T)| for every (d-1)-tree T, and the torsion part of its critical group
+would have to be 0.

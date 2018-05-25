@@ -1,0 +1,129 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{xcolor}
+
+%\usepackage[textheight=8.5in, margin=1.6in]{geometry}
+\usepackage[total={6in,8in}]{geometry}
+
+%\usepackage{tikz}
+%\usepackage{pgfplots}
+%\tikzstyle{ball} = [circle,shading=ball, ball color=black,
+%    minimum size=1mm,inner sep=1.3pt]
+%\usetikzlibrary{arrows.meta}
+%\tikzset{>={Latex[length=2mm,width=1.5mm]}}
+
+%\usepackage{graphicx}
+
+\usepackage{needspace}  % <-- to prevent bad pagebreak over environment titles
+% Use:  \Needspace{3\baselineskip} before opening an environment
+
+\usepackage{enumitem}
+\setlist[enumerate]{leftmargin=*}
+
+%\usepackage[colorlinks=true,citecolor=black,linkcolor=black,urlcolor=blue]{hyperref}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbf{T}}
+\newcommand{\sn}{\mathfrak{S}}
+\newcommand{\ve}{\varepsilon}
+\newcommand{\ips}[2]{\langle{#1}, {#2}\rangle}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Span}{\mathrm{Span}}
+\DeclareMathOperator{\rk}{\mathrm{rank}}
+\DeclareMathOperator{\trace}{\mathrm{tr}}
+\DeclareMathOperator{\im}{\mathrm{im}}
+\DeclareMathOperator{\Sym}{\mathrm{Sym}}
+\DeclareMathOperator{\Hom}{\mathrm{Hom}}
+\DeclareMathOperator{\diag}{\mathrm{diag}}
+\DeclareMathOperator{\glb}{\mathrm{glb}}
+\DeclareMathOperator{\lub}{\mathrm{lub}}
+
+\parskip = 0.05in
+\parindent = 0.0in
+
+%\pagestyle{empty}
+
+\begin{document}
+\centerline{Notes on divisors on simplicial complexes.}
+\bigskip
+
+Let~$\Delta$ be a~$d$-dimensional simplicial complex, and suppose
+that~$0$ is a winnable degree in dimension~$d-1$.  This means that all chains of
+dimension~$d-1$ with all-zero degrees are winnable.  This is the same as saying
+that
+\[
+  (\ker L_{d-1})^{\perp}/\im(L_{d-1})=0.
+\]
+However, we know that
+\[
+  (\ker L_{d-1})^{\perp}/\im(L_{d-1})\approx
+  \T(K_{d-1}(\Delta)):=\T(\ker\partial_{d-2}/\im(L_{d-1}))
+\]
+where~$\T$ stands for ``torsion part''.  
+
+Next, suppose that~$\Delta$ has a~$(d-1)$-dimensional spanning tree~$\Upsilon$, which is
+the same as assuming~$\tilde{\beta}_{d-2}(\Delta)=0$, i.e.,~$\widetilde{H}_{d-2}(\Delta)$ is
+torsion (QUESTION: is this true?).  Since~$\Upsilon$ is a $(d-1)$-tree, we have
+\[
+  \tilde{H}_{d-1}(\Upsilon)=0,\quad\text{and}\quad~\tilde{\beta}_{d-2}(\Upsilon)=0,
+\]
+and from this it follows that
+\[
+  f_{d-1}(\Upsilon)
+  =f_{d-1}(\Delta)-\tilde{\beta}_{d-1}(\Delta)+\tilde{\beta}_{d-2}(\Delta)
+  =f_{d-1}(\Delta)-\tilde{\beta}_{d-1}(\Delta).
+\]
+If we further assume that~$\widetilde{H}_{d-2}(\Upsilon)=0$, then there is an
+isomorphism
+\[
+  K_{d-1}(\Delta)\to\Z\tilde{F}_{d-1}/\im(\tilde{L}_{d-1})
+\]
+where~$\tilde{F}_{d-1}$ are the~$(d-1)$-dimensional faces that are not
+in~$\Upsilon$ and~$\tilde{L}_{d-1}$ is the reduced Laplacian with respect
+to~$\Upsilon$.  (What happens if~$\widetilde{H}_{d-2}(\Upsilon)\neq 0$?  Is
+  there still a map?  In our case, we know that~$K_{d-1}(\Delta)$ has no
+  torsion.  This implies that~$\det(\tilde{L}_{d-1})=1$.
+
+Is it surjective?)
+
+The~$d$-th tree number for~$\Delta$ is
+\[
+  \tau_n(\Delta):=\sum_{\Psi}|\widetilde{H}_{d-1}(\Psi)|^2
+\]
+where the sum is over all~$(d-1)$-dimensional spanning trees of~$\Delta$.
+By the simplicial matrix-tree theorem,
+\[
+  \tau_n(\Delta)
+  =\frac{|\widetilde{H}_{d-2}(\Delta)|^2}{|\widetilde{H}_{d-2}(\Upsilon)|^2}\det(\tilde{L}_{d-1})
+  =|\widetilde{H}_{d-2}(\Delta)|^2.
+\]
+(since~$\det(\tilde{L}_{d-1})=1$ and~$\widetilde{H}_{d-2}(\Upsilon)=0$).
+
+Now, assume further that~$\widetilde{H}_{d-2}(\Delta)=0$.  It then follows
+that~$\tau_n(\Delta)=1$.  It follows that~$\Delta$ has a
+unique~$d$-dimensional spanning tree~$\Psi$.  Since~$\Delta$ has a
+~$d$-dimensional spanning tree, it follows that $\tilde{\beta}_{d-1}(\Delta)=0$,
+and hence,
+\[
+  f_{d}(\Psi)
+  =f_{d}(\Delta)-\tilde{\beta}_{d}(\Delta)+\tilde{\beta}_{d-1}(\Delta)
+  =f_{d}(\Delta)-\tilde{\beta}_{d}(\Delta).
+\]
+Since~$\Psi$ is a $d$-spanning tree, it has the same~$(d-1)$-skeleton. It will
+equal~$\Delta$ if it has the same facets.  For sake of contradiction, suppose it
+does not.  Then the above formula says that~$\tilde{\beta}_{d}(\Delta)>0$.  This
+means there is a nonzero~$d$-chain in the kernel of~$\partial_d$.  This chain
+contains at least two facets~$\sigma_1$ and~$\sigma_2$ in its support.
+Fix~$\sigma_1$ and remove~$\sigma_2$ from~$\Delta$.  We get a new
+complex~$\Delta'$.  Working over the rational numbers, we may assume 
+
+\end{document}
+
+

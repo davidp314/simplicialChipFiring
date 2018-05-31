@@ -562,14 +562,23 @@ class KSimplicialComplex(SimplicialComplex):
 
         d - list of integers (the degrees of a divisor)
         k - integer (dimension)
-        rays_only - boolean
         witness - boolean
+        rays_only - boolean
 
         OUTPUT:
 
         boolean or (boolean, list of integers)
 
         EXAMPLES::
+
+            sage: s = ksimplicial_complexes.annulus(3)
+            building a KSimplicialComplex
+            sage: s.homology()
+            {-1: 0, 0: 0, 1: Z, 2: 0, 3: 0}
+            sage: s.is_winning_degree([0]*s.Hilbert_basis(1).nrows(),1,true,false)
+            (False, (1, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0))
+            sage: s.is_winning_degree([0]*s.Hilbert_basis(2).nrows(),2,true,false)
+            (True, None)
         """
         if rays_only and len(d)!=len(self.positive_kernel(k).rays()):
             print 'dimensions of arguments do not agree'
@@ -587,7 +596,7 @@ class KSimplicialComplex(SimplicialComplex):
         # the torsion part of the critical group of dimension k.  See if any of
         # these are unwinnable.
         gp = self.Picard_group_gens(k)[0] # generators for torsion part of group
-        invars = self.critical(k).invariants() # orders for these generators
+        invars = [i for i in self.critical(k).invariants() if i!=0] # orders for these generators
         c = cartesian_product_iterator([range(i) for i in invars])
         is_winnable = True
         for i in c:
@@ -2351,5 +2360,30 @@ class KSimplicialComplexExamples(object):
         EXAMPLES::
         """
         return KSimplicialComplex(simplicial_complexes.ProjectivePlane())
+
+    def annulus(self, variant=0):
+        r"""
+        An annulus with possible attached hollow of filled tetrahedron.
+
+        INPUT:
+
+        variant - integer (0, 1, 2, 3, 4)
+
+        OUTPUT:
+
+        - KSimplicialComplex
+        """
+        if variant==1:
+            f = [(0,1,4),(0,1,6),(0,2,3),(0,3,4),(0,4,6),(1,2,5),(1,4,5),(1,4,6),(2,3,5)]
+        elif variant==2:
+            f = [(0,1,4),(0,2,3),(0,2,6),(0,3,4),(0,3,6),(1,2,5),(1,4,5),(2,3,5),(2,3,6)]
+        elif variant==3:  # filled tetrahedron
+            f = [(0,1,4,6),(0,2,3),(0,3,4),(1,2,5),(1,4,5),(2,3,5)]
+        elif variant==4:  # filled tetrahedron
+            f = [(0,1,4),(0,2,3),(0,3,4,6),(1,2,5),(1,4,5),(2,3,5)]
+        else: # plain annulus
+            f = [(0,1,4),(0,2,3),(0,3,4),(1,2,5),(1,4,5),(2,3,5)]
+        return KSimplicialComplex(f)
+
 
 ksimplicial_complexes = KSimplicialComplexExamples()

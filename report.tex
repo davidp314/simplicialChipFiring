@@ -47,6 +47,7 @@
 \DeclareMathOperator{\im}{\mathrm{im}}
 \DeclareMathOperator{\Sym}{\mathrm{Sym}}
 \DeclareMathOperator{\Hom}{\mathrm{Hom}}
+\DeclareMathOperator{\Ext}{\mathrm{Ext}}
 \DeclareMathOperator{\diag}{\mathrm{diag}}
 \DeclareMathOperator{\glb}{\mathrm{glb}}
 \DeclareMathOperator{\lub}{\mathrm{lub}}
@@ -206,15 +207,23 @@ of~$\Delta$.\footnote{Need to say why the perp is the group of~$i$-chains of
 degree~$0$.}
 \end{prop}
 
-\begin{theorem} Suppose that~$\tau_d(\Delta)=1$.  Then~$0$ is a winning degree in
-  dimension~$d-1$ if and only if~$\tH^d(\Delta)$ is free. (NOTE: check on
-  whether reduced cohomology is important here.)
+\begin{theorem} If~$\tau_d(\Delta)=1$, then~$0$ is a winning degree in
+  dimension~$d-1$. 
 \end{theorem}
 \begin{proof} Since~$\tau_d(\Delta)=1$, by Proposition~\ref{cor: tree number},
   we have~$\tH_d(\Delta)=\tH_{d-1}(\Delta)=0$.  Thus,~$\partial_d$ is injective,
   and~$\im\partial_d=\ker\partial_{d-1}$.
+  The universal coefficient theorem gives an exact sequence
+  \[
+    0\to\Ext^1(H_{d-1}(\Delta),\Z)\to H^d(\Delta)\to\Hom(H_d(\Delta),\Z)\to0,
+  \]
+  which implies that~$H^d(\Delta)=0$. We have~$\tH^d(\Delta)=\tH^d(\Delta)$
+  for~$d>0$.  In the case where~$d=0$, we have that~$\tau_d(\Delta)=1$ implies
+  that~$\Delta$ is a single point,~$\partial_{0}$ is an isomorphism, and thus,
+  every~$(d-1)$-cycle is linearly equivalent to~$0$.  So we will assume~$d>0$
+  from now on.
 
-  First suppose that~$\tH^d(\Delta)$ is free.  To show~$0$ is a winning degree
+  To show~$0$ is a winning degree
   in dimension~$d-1$, we must show~$\crit_{d-1}(\Delta)$ is also torsion-free.
   So let~$\alpha\in\ker\partial_{d-1}$ and suppose there exists an
   integer~$n>0$ such that~$n\alpha\in\im(L_{d-1})$.  So there exists~$\beta\in
@@ -227,16 +236,6 @@ degree~$0$.}
   Since~$\partial_d$ is injective,~$n\gamma=\partial_d^t\beta$.
   Since~$\tH^d(\Delta)=C^d(\Delta)/\im\partial_d^t=0$, it follows
   that~$\gamma=\im\partial_d^t$, and hence,~$\alpha\in\im L_{d-1}$, as required.
-
-  Conversely, suppose that~$0$ is a winning degree in dimension~$d-1$.  We would
-  like to show that~$\tH^d(\Delta)$ is free.  So
-  say~$n\sigma=\partial_d^t\mu\in\im\partial_d^t$ for some~$\sigma\in
-  C^d(\Delta)$ and some integer~$n>0$
-  It follows that~$n\partial_d\sigma=0$ as an element of~$\crit_{_d-1}(\Delta)$.
-  However,~$\crit_{d-1}(\Delta)$ is torsion-free.
-  So~$\partial_d\sigma=L_{d-1}\nu=\partial_d\partial_d^t\nu$ for some~$\nu\in
-  C_{d-1}(\Delta)$.  Since~$\partial_d$ is injective, it follows
-  that~$\sigma=\partial_d^t\nu$.
 \end{proof}
 
 \begin{example}

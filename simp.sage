@@ -1,14 +1,13 @@
 ## Classes and methods for divisors on simplicial complexes.
 
 # TODO
-# - for divisor_degrees, include a 'rays_only' flag, which doesn't trigger use
-#   of the Hilbert basis
-# - add a function for finding the smallest degrees guaranteeing winnability
 # - add documentation, including examples
+# - only compute the positive kernel on demand (and then save it
 
 
 # technique for caching results of function calls
 from functools import wraps
+from sage.matroids.advanced import *
 
 class FuncCache(object):
     def __init__(self):
@@ -40,7 +39,6 @@ class KSimplicialComplex(SimplicialComplex):
 	sage: load('simp.sage')
 	sage: S = KSimplicialComplex([[1,2,3],[1,2,4],[1,2,5],[1,3,4],[1,3,5],[2,3,4],[2
 	....: ,3,5]])
-	building a KSimplicialComplex
 	sage: S.facets()
 	{(1, 3, 4), (1, 3, 5), (2, 3, 5), (1, 2, 3), (2, 3, 4), (1, 2, 5), (1, 2, 4)}
 	sage: S.critical()
@@ -51,7 +49,7 @@ class KSimplicialComplex(SimplicialComplex):
     """
 
     def __init__(self, *kwds):
-        print "building a KSimplicialComplex"
+        # print "building a KSimplicialComplex"
         super(KSimplicialComplex,self).__init__(*kwds)
         self.set_immutable()
         C = self.chain_complex(augmented=true)
@@ -154,9 +152,7 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.equatorial_bipyramid()
-            building a KSimplicialComplex
             sage: s.reduced_laplacian()
-            building a KSimplicialComplex
 
             (
                     [0 0]                                                                 
@@ -164,7 +160,6 @@ class KSimplicialComplex(SimplicialComplex):
                     facets
                     )
                     sage: s.reduced_laplacian(1)
-                    building a KSimplicialComplex
 
                     (
                             [ 3 -1 -1  1  1]                                                                                                
@@ -175,7 +170,6 @@ class KSimplicialComplex(SimplicialComplex):
                             2, 3, 4, 5) and facets {(3, 4), (1, 5), (3, 5), (2, 5)}
                             )
                             sage: s.reduced_laplacian(1,return_tree=False)
-                            building a KSimplicialComplex
 
                             [ 3 -1 -1  1  1]
                             [-1  3 -1 -1  0]
@@ -183,7 +177,6 @@ class KSimplicialComplex(SimplicialComplex):
                             [ 1 -1  0  3 -1]
                             [ 1  0 -1 -1  2]
                             sage: T = s.reduced_laplacian(1)[1]
-                            building a KSimplicialComplex
                             sage: s.reduced_laplacian(1,tree=T,return_tree=False)
 
                             [ 3 -1 -1  1  1]
@@ -192,7 +185,6 @@ class KSimplicialComplex(SimplicialComplex):
                             [ 1 -1  0  3 -1]
                             [ 1  0 -1 -1  2]
             sage: s = ksimplicial_complexes.square_antiprism()
-            building a KSimplicialComplex
             sage: s.reduced_laplacian()
             There is no 2-dimensional spanning tree.
         """
@@ -236,7 +228,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: c = s.positive_lattice(1)
             sage: c
             3-d cone in 4-d lattice N
@@ -279,7 +270,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
 	    sage: e = equatorial_bipyramid()
-	    building a KSimplicialComplex
 	    sage: e.Picard_group_gens(0)
 	    ([(-1, 0, 1, 0, 0), (-1, 0, 0, 1, 0)], [(0, 0, 0, 0, 1)])
 	    sage: e.Picard_group_gens(0,True)
@@ -346,7 +336,6 @@ class KSimplicialComplex(SimplicialComplex):
 
         EXAMPLES::
             sage: s = ksimplicial_complexes.equatorial_bipyramid()
-            building a KSimplicialComplex
             sage: s.critical()
 
             [Finitely generated module V/W over Integer Ring with invariants (5, 15),
@@ -408,7 +397,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
 	    sage: e = equatorial_bipyramid()
-	    building a KSimplicialComplex
 	    sage: e.div_gens(true)
 	    Torsion generators:
 	    (1, 0, -1, 0, 0, 1, 0, 0, 0)
@@ -498,7 +486,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
 	    sage: e = equatorial_bipyramid()
-	    building a KSimplicialComplex
 	    sage: a = e.Picard_group_gens(1)
 	    sage: e.standard_repr_for_group_elt(a[1][0],1,true)
 	    [15, 0, 0, 0, 0]
@@ -572,7 +559,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.annulus(3)
-            building a KSimplicialComplex
             sage: s.homology()
             {-1: 0, 0: 0, 1: Z, 2: 0, 3: 0}
             sage: s.is_winning_degree([0]*s.Hilbert_basis(1).nrows(),1,true,false)
@@ -637,7 +623,6 @@ class KSimplicialComplex(SimplicialComplex):
 #        EXAMPLES::
 #
 #            sage: s = ksimplicial_complexes.equatorial_bipyramid()
-#            building a KSimplicialComplex
 #            sage: s.find_minimal_winning_degrees(1)
 #            Starting point: [2, 2, 2, 2]
 #
@@ -651,7 +636,6 @@ class KSimplicialComplex(SimplicialComplex):
 #            sage: s.facets()[:-2]   # a simplicial tree
 #            [(1, 3, 4), (1, 3, 5), (2, 3, 5), (1, 2, 3), (2, 3, 4)]
 #            sage: ns = KSimplicialComplex(s.facets()[:-2])
-#            building a KSimplicialComplex
 #            sage: ns.find_minimal_winning_degrees(1)
 #            Starting point: [0, 0, 0, 0]
 #
@@ -707,7 +691,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
         sage: s = ksimplicial_complexes.equatorial_bipyramid()
-        building a KSimplicialComplex
         sage: s.div_comp([1,3],[1,3])
         True
         sage: s.div_comp([1,5],[1,4])
@@ -740,7 +723,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.equatorial_bipyramid()
-            building a KSimplicialComplex
             sage: s.find_minimal_winning_degrees(1)
             Starting point: [2, 2, 2, 2]
 
@@ -754,7 +736,6 @@ class KSimplicialComplex(SimplicialComplex):
             sage: s.facets()[:-2]   # a simplicial tree
             [(1, 3, 4), (1, 3, 5), (2, 3, 5), (1, 2, 3), (2, 3, 4)]
             sage: ns = KSimplicialComplex(s.facets()[:-2])
-            building a KSimplicialComplex
             sage: ns.find_minimal_winning_degrees(1)
             Starting point: [0, 0, 0, 0]
 
@@ -803,6 +784,79 @@ class KSimplicialComplex(SimplicialComplex):
         else:
             return False
 
+    def is_forest(self):
+        r"""
+        Is this simplicial complex a spanning forest.  This means that it's
+        top-dimensional homology is 0.
+
+        OUTPUT:
+
+        boolean
+
+        EXAMPLES::
+
+            sage: s = ksimplicial_complexes.annulus()
+            sage: s.is_forest()
+            True
+            sage: s = ksimplicial_complexes.hollow_simplex(2)
+            sage: s.homology()
+            {-1: 0, 0: 0, 1: 0, 2: Z}
+            sage: s.is_forest()
+            False
+        """
+        return self.homology(self.dimension()).ngens()==0
+
+    def spanning_forest(self, all=False):
+        r"""
+        Find a spanning forest.  This is a top-dimensional subcomplex with the
+        same codimension 1 skeleton and such that (i) its top homology is 0 and
+        (ii) its number of facets is the same as the total number of facets minus
+        the top betti number of the whole complex.  If all is True, return all
+        spanning forests.
+
+        INPUT:
+
+        all - boolean
+
+        OUTPUT:
+
+        KSimplicialComplex or list of KSimplicialComplex
+
+        EXAMPLES::
+
+
+        """
+        facets = self.facets()
+        d = self.dimension()
+        b = self.betti(d)
+        result = []
+        for c in Combinations(facets, len(facets)-b):
+            candidate = SimplicialComplex(c)
+            if candidate.n_skeleton(d-1)==self.n_skeleton(d-1) and candidate.homology(d).ngens()==0:
+                if not all:
+                    return KSimplicialComplex(candidate)
+                else: 
+                    result.append(KSimplicialComplex(candidate))
+        return result
+
+    def forest_number(self):
+        r"""
+        Find the spanning forest number.  This is the sum of the squares of the
+        sizes of the torsion subgroups of the codimension 1 homology of all
+        spanning forests.  
+
+        OUTPUT:
+
+        integer
+        """
+        d = self.dimension()
+        forests = self.spanning_forest(True)
+        result = 0
+        for f in forests:
+            torsion_size = prod([i for i in f.homology(d-1).invariants() if i!=0])
+            result += torsion_size^2
+        return result
+
     def find_spanning_tree(self, d=None):
         r"""
         Find a d-dimensional spanning tree.  For example, in a graph, a usual
@@ -819,12 +873,10 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.equatorial_bipyramid()
-            building a KSimplicialComplex
             sage: s.n_cells(2)
             [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (2, 3, 4), (2,
             3, 5)]
             sage: t = s.find_spanning_tree()
-            building a KSimplicialComplex
             sage: t.n_cells(2)
             [(1, 2, 5), (1, 3, 4), (1, 3, 5), (2, 3, 4), (2, 3, 5)]
             sage: t.is_tree()
@@ -868,7 +920,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = [1,0,0,1,2,1]
             sage: s.divisor_degrees(D,1)
             [3, 3, 3]
@@ -902,7 +953,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = hollow_simplex(2)
-            building a KSimplicialComplex
             sage: s.divisor_polytope([1,1,1,1,1,1],1)
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 7
             vertices
@@ -928,7 +978,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
 	    sage: s = hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: s.complete_linear_system([1,1,1,1,1,1],1)
 
 	    [(2, 0, 0, 3, 1, 2),
@@ -961,7 +1010,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLES::
 
             sage: s = hollow_simplex(2)
-            building a KSimplicialComplex
             sage: s.is_winnable([-1,0,0,1,0,1],1)
             False
             sage: s.is_winnable([-1,0,0,1,1,1],1)
@@ -992,7 +1040,6 @@ class KSimplicialComplex(SimplicialComplex):
         EXAMPLE::
 
         sage: s = hollow_simplex(2)
-        building a KSimplicialComplex
         sage: s.is_minimal_winnable([-1,0,0,2,1,1],1,witness=0) # not minimal
         False
         sage: s.is_minimal_winnable([-1,0,0,2,1,1],1,witness=1) # a guarantee
@@ -1057,7 +1104,6 @@ class SimplicialDivisor(list):
     EXAMPLES::
 
         sage: s = ksimplicial_complexes.hollow_simplex(2)
-        building a KSimplicialComplex
         sage: D = SimplicialDivisor(s,[2,2,1,1,1,1],1)
         sage: D.dim()
         1
@@ -1138,7 +1184,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
 	    sage: D.__dict__
 
@@ -1165,7 +1210,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
 	    sage: E = deepcopy(D)
 	    sage: D[0] += 1
@@ -1188,7 +1232,6 @@ class SimplicialDivisor(list):
         EXAMPLES::   
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
 	    sage: D.polytope()
 	    A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8 vertices
@@ -1229,7 +1272,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
 	    sage: D.__dict__
 
@@ -1273,7 +1315,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
             sage: E = SimplicialDivisor(s,[1,0,0,0,0,0],1)
             sage: D + E
@@ -1296,7 +1337,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
             sage: 3*D
             [3, 6, 9, 0, 0, 0]
@@ -1320,7 +1360,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
             sage: 3*D
             [3, 6, 9, 0, 0, 0]
@@ -1344,7 +1383,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
             sage: E = SimplicialDivisor(s,[1,0,0,0,0,0],1)
             sage: D.__radd__(E)
@@ -1395,7 +1433,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
             sage: E = SimplicialDivisor(s,[1,0,0,0,0,0],1)
             sage: D.__rsub__(E)
@@ -1418,7 +1455,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[0,0,0,0,0,0],1)
 	    sage: -D
 	    [0, 0, 0, 0, 0, 0]
@@ -1445,7 +1481,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[0,0,0,0,0,0],1)
 	    sage: E = SimplicialDivisor(s,[1,0,0,0,0,0],1)
 	    sage: F = SimplicialDivisor(s,[1,-1,0,0,0,0],1)
@@ -1476,7 +1511,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[0,0,0,0,0,0],1)
 	    sage: E = SimplicialDivisor(s,[1,0,0,0,0,0],1)
 	    sage: F = SimplicialDivisor(s,[1,-1,0,0,0,0],1)
@@ -1507,7 +1541,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[0,0,0,0,0,0],1)
 	    sage: E = SimplicialDivisor(s,[1,0,0,0,0,0],1)
 	    sage: F = SimplicialDivisor(s,[1,-1,0,0,0,0],1)
@@ -1542,7 +1575,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[0,0,0,0,0,0],1)
 	    sage: E = SimplicialDivisor(s,[1,0,0,0,0,0],1)
 	    sage: F = SimplicialDivisor(s,[1,-1,0,0,0,0],1)
@@ -1572,7 +1604,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[0,0,0,0,0,0],1)
 	    sage: D.simplicial_complex()
 	    Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 2, 3), (0, 1, 2), (1, 2, 3), (0, 1, 3)}
@@ -1593,7 +1624,6 @@ class SimplicialDivisor(list):
 
             sage: load('simp.sage')
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
             sage: D.dim()
             1
@@ -1611,7 +1641,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,vector([1,2,3,0,0,0]),1)
             sage: D.face_list()
             [(2, 3), (0, 2), (1, 3), (1, 2), (0, 3), (0, 1)]
@@ -1636,7 +1665,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[0,0,0,0,0,0],1)
 	    sage: F = D.borrow(0)
 	    sage: F
@@ -1683,7 +1711,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
 	    sage: s = ksimplicial_complexes.diamond_complex()
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[1,1,1,1,1],1)
 	    sage: D.__dict__
 
@@ -1714,7 +1741,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,1,1,1,1],1)
             sage: D.polytope()
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 5 vertices
@@ -1728,7 +1754,6 @@ class SimplicialDivisor(list):
         EXAMPLES:: 
 
 	    sage: s = ksimplicial_complexes.diamond_complex()
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[1,1,0,0,0],1)
 	    sage: D.__dict__
 
@@ -1757,7 +1782,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,1,0,0,0],1)
             sage: D.polytope_integral_points()
             ((-1, 1), (0, 0))
@@ -1771,7 +1795,6 @@ class SimplicialDivisor(list):
         EXAMPLES::  
 
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,1,0,0,0],1)
             sage: D.__dict__
 
@@ -1813,12 +1836,10 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,1,0,0,0],1)
             sage: D.effective_div(True)
             [[[2, 0, 1, 0, 0], [0, 0, -1, 0, 1]], [[1, 1, 0, 0, 0], [0, 0, 0, 0, 0]]]
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,1,0,0,0],1)
             sage: D.effective_div()
             [[2, 0, 1, 0, 0], [1, 1, 0, 0, 0]]
@@ -1861,7 +1882,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[-1,1,0,0,0],1)
             sage: D.is_winnable()
             True
@@ -1899,7 +1919,6 @@ class SimplicialDivisor(list):
         EXAMPLE::
 
 	  sage: s = ksimplicial_complexes.hollow_simplex(2)
-	  building a KSimplicialComplex
 	  sage: D = SimplicialDivisor(s,[-1,-1,1,1,1,1],1)
 	  sage: D.is_winnable()
 	  True
@@ -1976,7 +1995,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,2,1,1,1],1)
             sage: D.degrees()
             [2, 3, 4]
@@ -2004,7 +2022,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,1,1,1,1,1],1)
             sage: D.is_in_positive_lattice()
             True
@@ -2057,7 +2074,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.simplex(2)
-            building a KSimplicialComplex
             sage: s.facets()
             {(0, 1, 2)}
             sage: D = SimplicialDivisor(s,[0,0,0],1)
@@ -2086,7 +2102,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.simplex(2)
-            building a KSimplicialComplex
             sage: s.facets()
             {(0, 1, 2)}
             sage: D = SimplicialDivisor(s,[0,0,0],1)
@@ -2115,7 +2130,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = hollow_simplex(2)
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[-1,0,5,1,0,0],1)
             sage: D.apply_firing_script([0,0,0,-3,1,2])
             [3, 0, 1, 5, 0, 0]
@@ -2137,7 +2151,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: D = SimplicialDivisor(s,[1,1,1,1,1],1)
             sage: D.is_effective()
             True
@@ -2169,7 +2182,6 @@ class SimplicialDivisor(list):
         EXAMPLES::
 
 	    sage: s = ksimplicial_complexes.hollow_simplex(2)
-	    building a KSimplicialComplex
 	    sage: D = SimplicialDivisor(s,[-1,0,5,1,0,0],1)
 	    sage: D.is_winnable()
 	    True
@@ -2226,7 +2238,6 @@ class KSimplicialComplexExamples(object):
     EXAMPLES::
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: s.critical()
 
             [Finitely generated module V/W over Integer Ring with invariants (4, 4),
@@ -2268,7 +2279,6 @@ class KSimplicialComplexExamples(object):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.equatorial_bipyramid()
-            building a KSimplicialComplex
             sage: s.facets()
             {(1, 3, 4), (1, 3, 5), (2, 3, 5), (1, 2, 3), (2, 3, 4), (1, 2, 5), (1, 2, 4)}
         """
@@ -2285,7 +2295,6 @@ class KSimplicialComplexExamples(object):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.diamond_complex()
-            building a KSimplicialComplex
             sage: s.facets()
             {(1, 2, 3), (2, 3, 4)}
         """
@@ -2302,7 +2311,6 @@ class KSimplicialComplexExamples(object):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.simplex(2)
-            building a KSimplicialComplex
             sage: s.facets()
             {(0, 1, 2)}
         """
@@ -2319,7 +2327,6 @@ class KSimplicialComplexExamples(object):
         EXAMPLES::
 
             sage: s = ksimplicial_complexes.hollow_simplex(2)
-            building a KSimplicialComplex
             sage: s.facets()
             {(0, 2, 3), (0, 1, 2), (1, 2, 3), (0, 1, 3)}
         """

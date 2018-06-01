@@ -2,8 +2,6 @@
 
 # TODO
 # - add documentation, including examples
-# - only compute the positive kernel on demand (and then save it
-
 
 # technique for caching results of function calls
 from functools import wraps
@@ -68,7 +66,7 @@ class KSimplicialComplex(SimplicialComplex):
         self._laplacian_kernel = []
         self._polytope_ieqs = []
         self._Hilbert_basis = {}
-        self._positive_kernel = []
+        self._positive_kernel = {}
         self._pivots = []
         for i in range(n-1):
             li = self._laplacian[i+1]
@@ -78,10 +76,6 @@ class KSimplicialComplex(SimplicialComplex):
             p = lk.matrix().pivots()
             self._pivots.append(p)
             self._polytope_ieqs.append(li.delete_columns(p))
-            c = Cone(lk.matrix())
-            pos_orthant = Cone(identity_matrix(li.nrows()))
-            pos_cone = c.intersection(pos_orthant)
-            self._positive_kernel.append(pos_cone)
 
     def boundary(self, n=None):
         if n==None:
@@ -210,6 +204,13 @@ class KSimplicialComplex(SimplicialComplex):
         The semigroup of nonnegative vectors in the kernel of the k-th
         laplacian.
         """
+        if k not in [0..self.dimension()]:
+            print "Argument out of range"
+            return
+        elif k not in self._positive_kernel.keys():
+            c = Cone(self.laplacian_kernel(k).matrix())
+            pos_orthant = Cone(identity_matrix(self.laplacian(k).nrows()))
+            self._positive_kernel[k] = c.intersection(pos_orthant)
         return self._positive_kernel[k]
 
     @my_cache
@@ -250,7 +251,7 @@ class KSimplicialComplex(SimplicialComplex):
             print "Argument out of range"
             return
         elif k not in self._Hilbert_basis.keys():
-            self._Hilbert_basis[k] = self._positive_kernel[k].Hilbert_basis()
+            self._Hilbert_basis[k] = self.positive_kernel(k).Hilbert_basis()
         return self._Hilbert_basis[k].matrix()
 
     def Picard_group_gens(self, k, text_version=False):
@@ -930,7 +931,7 @@ class KSimplicialComplex(SimplicialComplex):
             [1 0 1 0 1 0]
         """
         if rays_only:
-            return [vector(D)*vector(i) for i in self._positive_kernel[k].rays()] 
+            return [vector(D)*vector(i) for i in self.positive_kernel(k).rays()] 
         else: 
             return [vector(D)*vector(i) for i in self.Hilbert_basis(k)]
 

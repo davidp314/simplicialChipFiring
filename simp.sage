@@ -51,8 +51,6 @@ class KSimplicialComplex(SimplicialComplex):
         super(KSimplicialComplex,self).__init__(*kwds)
         self.set_immutable()
         C = self.chain_complex(augmented=true)
-        self._complex = self.chain_complex(augmented=True)
-        C = self._complex
         self._boundary = C.differential()
         D = C.differential()
         n = len(D)-1
@@ -82,21 +80,6 @@ class KSimplicialComplex(SimplicialComplex):
             return self._boundary
         else:
             return self._boundary[n]
-
-    def betti(self, n=None):
-        if n==None:
-            return self._complex.betti()
-        else:
-            return self._complex.betti(n)
-
-    def homology(self, n=None):
-        if n==None:
-            return self._complex.homology()
-        else:
-            return self._complex.homology(n)
-
-    def complex(self):
-        return self._complex
 
     def critical(self, n=None):
         if n==None:
@@ -192,7 +175,7 @@ class KSimplicialComplex(SimplicialComplex):
         face_indices = [self.n_cells(k).index(f) for f in faces]
         red_lap = self.laplacian(k).matrix_from_rows_and_columns(face_indices,face_indices)
         if check:
-            if tree.homology(k-1).ngens!=0:
+            if tree.homology(k-1).ngens()!=0:
                 print 'WARNING: the tree is not acyclic in codimension 1. Thus, the cokernel of the reduced k-laplacian may not be isomorphic to the k-th critical group.'
         if return_tree:
             return red_lap, tree
@@ -840,23 +823,42 @@ class KSimplicialComplex(SimplicialComplex):
                     result.append(KSimplicialComplex(candidate))
         return result
 
-    def forest_number(self):
+    def forest_number(self, method=2):
         r"""
         Find the spanning forest number.  This is the sum of the squares of the
         sizes of the torsion subgroups of the codimension 1 homology of all
-        spanning forests.  
+        spanning forests.  Method 1 is a direct application of the formula, and
+        method 2 uses the cellular matrix-tree theorem.
+
+        INPUT:
+
+        method -  integer (1 or 2)
 
         OUTPUT:
 
         integer
         """
         d = self.dimension()
-        forests = self.spanning_forest(True)
-        result = 0
-        for f in forests:
-            torsion_size = prod([i for i in f.homology(d-1).invariants() if i!=0])
-            result += torsion_size^2
-        return result
+        if method==1:
+            forests = self.spanning_forest(True)
+            result = 0
+            for f in forests:
+                torsion_size = prod([i for i in f.homology(d-1).invariants() if i!=0])
+                result += torsion_size^2
+            return result
+        else:
+            mb = LinearMatroid(self.boundary(d).transpose()).basis()
+            facets = [self.n_cells(d-1)[i] for i in mb]
+            # relatively acyclic subcomplex
+            ras = SimplicialComplex(facets)
+            # find torsion part of d-th homology of s
+            t = prod([i for i in self.homology(d).invariants() if i!=0])
+            # find torsion part of d-th relative homology of s
+            th = prod([i for i in self.homology(d,subcomplex=ras).invariants() if i!=0])
+            # create the reduced laplacian
+            face_indices = [self.n_cells(d-1).index(f) for f in ras.n_cells(d-1)]
+            red_lap = self.laplacian(d-1).matrix_from_rows_and_columns(face_indices,face_indices)
+            return red_lap.det()*t^2/th^2
 
     def find_spanning_tree(self, d=None):
         r"""

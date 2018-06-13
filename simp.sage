@@ -2395,5 +2395,25 @@ class KSimplicialComplexExamples(object):
             f = [(0,1,4),(0,2,3),(0,3,4),(1,2,5),(1,4,5),(2,3,5)]
         return KSimplicialComplex(f)
 
+    def random(self, n, d, p=0.5):
+        r"""
+        A random KSimplicialComplex with n vertices and dimension d.
+        Constructed as follows: take n vertices and include all of the simplices
+        of dimension strictly less than d, and then for each possible simplex of
+        dimension d, include it with probability p.
+
+
+        INPUT:
+
+        n - integer (number of vertices)
+        d - integer (dimension)
+        p - floating point between 0 and 1
+
+        OUTPUT:
+
+        - KSimplicialComplex
+        """
+        return KSimplicialComplex(simplicial_complexes.RandomComplex(n,d,p))
+
 
 ksimplicial_complexes = KSimplicialComplexExamples()
